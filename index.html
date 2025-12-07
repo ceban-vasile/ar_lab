@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>EXODUS 2157 - AR Experience</title>
+  <title>Forest Tales - AR Experience</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
@@ -11,15 +11,15 @@
 
   <style>
     :root {
-      --neon-cyan: #00f5ff;
-      --neon-magenta: #ff00ff;
-      --neon-purple: #b026ff;
-      --neon-green: #00ff88;
-      --neon-orange: #ff6600;
-      --neon-red: #ff3344;
-      --mars-orange: #ff6b35;
-      --mars-red: #d4451a;
-      --dark-bg: #0a0a12;
+      --forest-green: #2d5016;
+      --bright-green: #4ade80;
+      --leaf-green: #22c55e;
+      --moss-green: #16a34a;
+      --earth-brown: #78350f;
+      --bark-brown: #92400e;
+      --sky-blue: #0ea5e9;
+      --gold: #fbbf24;
+      --dark-bg: #0f1810;
     }
 
     * { box-sizing: border-box; }
@@ -27,13 +27,13 @@
       margin: 0;
       overflow: hidden;
       font-family: 'Rajdhani', sans-serif;
-      background: var(--dark-bg);
+      background: linear-gradient(135deg, #0f1810 0%, #1a2817 100%);
     }
 
     .loader {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: var(--dark-bg);
+      background: linear-gradient(135deg, #0f1810 0%, #1a2817 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -44,16 +44,16 @@
     .loader.hidden { opacity: 0; visibility: hidden; }
     .loader-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 24px;
+      font-size: 28px;
       font-weight: 900;
-      color: var(--neon-cyan);
-      text-shadow: 0 0 20px var(--neon-cyan);
+      color: var(--bright-green);
+      text-shadow: 0 0 20px var(--bright-green), 0 0 40px var(--leaf-green);
       letter-spacing: 6px;
     }
     .loader-bar {
       width: 150px;
       height: 2px;
-      background: #222;
+      background: #1a2817;
       margin-top: 20px;
       position: relative;
       overflow: hidden;
@@ -64,7 +64,7 @@
       left: -50%;
       width: 50%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+      background: linear-gradient(90deg, transparent, var(--bright-green), transparent);
       animation: loadingBar 1.5s infinite;
     }
     @keyframes loadingBar { 0% { left: -50%; } 100% { left: 100%; } }
@@ -74,7 +74,7 @@
       top: 0;
       left: 0;
       right: 0;
-      background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 70%, transparent 100%);
+      background: linear-gradient(180deg, rgba(15,24,16,0.95) 0%, rgba(15,24,16,0.7) 70%, transparent 100%);
       padding: 12px 15px 20px 15px;
       z-index: 100;
       pointer-events: none;
@@ -90,20 +90,20 @@
     .logo {
       font-family: 'Orbitron', sans-serif;
       font-weight: 900;
-      font-size: 16px;
-      color: var(--neon-cyan);
-      text-shadow: 0 0 10px var(--neon-cyan);
+      font-size: 18px;
+      color: var(--bright-green);
+      text-shadow: 0 0 10px var(--bright-green), 0 0 20px var(--leaf-green);
       letter-spacing: 3px;
     }
-    .logo span { color: var(--neon-magenta); text-shadow: 0 0 10px var(--neon-magenta); }
+    .logo span { color: var(--earth-brown); text-shadow: 0 0 10px var(--bark-brown); }
 
     .status {
       font-size: 9px;
-      color: #555;
+      color: #4a6340;
       letter-spacing: 1px;
       text-align: right;
     }
-    .status .online { color: var(--neon-green); }
+    .status .online { color: var(--bright-green); }
 
     .progress-row {
       display: flex;
@@ -116,35 +116,35 @@
       align-items: center;
       gap: 6px;
       padding: 6px 8px;
-      background: rgba(0,0,0,0.5);
-      border: 1px solid #222;
+      background: rgba(15,24,16,0.6);
+      border: 1px solid #2d5016;
       border-radius: 6px;
       transition: all 0.3s;
     }
     .chapter-dot.active {
-      border-color: var(--neon-cyan);
-      box-shadow: 0 0 10px rgba(0,245,255,0.3);
+      border-color: var(--bright-green);
+      box-shadow: 0 0 10px rgba(74,222,128,0.4);
     }
-    .chapter-dot.active-mars {
-      border-color: var(--mars-orange);
-      box-shadow: 0 0 10px rgba(255,107,53,0.3);
+    .chapter-dot.active-bear {
+      border-color: var(--earth-brown);
+      box-shadow: 0 0 10px rgba(120,53,15,0.4);
     }
     .chapter-dot.current {
-      border-color: var(--neon-orange);
+      border-color: var(--gold);
       animation: pulse 1.5s infinite;
     }
-    @keyframes pulse { 0%, 100% { box-shadow: 0 0 5px var(--neon-orange); } 50% { box-shadow: 0 0 12px var(--neon-orange); } }
+    @keyframes pulse { 0%, 100% { box-shadow: 0 0 5px var(--gold); } 50% { box-shadow: 0 0 12px var(--gold); } }
     .dot-icon { font-size: 14px; }
     .dot-text {
       font-size: 8px;
-      color: #555;
+      color: #4a6340;
       letter-spacing: 1px;
       text-transform: uppercase;
     }
     .chapter-dot.active .dot-text, .chapter-dot.current .dot-text { color: #aaa; }
     .dot-or {
       font-size: 8px;
-      color: #444;
+      color: #3a4d32;
       padding: 0 2px;
     }
 
@@ -154,7 +154,7 @@
       left: 0;
       right: 0;
       height: 35px;
-      background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+      background: linear-gradient(0deg, rgba(15,24,16,0.9) 0%, transparent 100%);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -163,11 +163,11 @@
     }
     .scan-hint {
       font-size: 10px;
-      color: #666;
+      color: #4a6340;
       letter-spacing: 2px;
     }
     .scan-hint .target {
-      color: var(--neon-orange);
+      color: var(--gold);
       font-weight: 700;
     }
 
@@ -175,7 +175,7 @@
       position: fixed;
       width: 20px;
       height: 20px;
-      border: 1px solid rgba(0,245,255,0.4);
+      border: 1px solid rgba(74,222,128,0.4);
       z-index: 50;
     }
     .corner-tl { top: 8px; left: 8px; border-right: none; border-bottom: none; }
@@ -188,8 +188,8 @@
       bottom: 50px;
       left: 12px;
       right: 12px;
-      background: linear-gradient(135deg, rgba(0,0,0,0.92) 0%, rgba(20,0,40,0.92) 100%);
-      border: 1px solid var(--neon-purple);
+      background: linear-gradient(135deg, rgba(15,24,16,0.95) 0%, rgba(45,80,22,0.92) 100%);
+      border: 1px solid var(--leaf-green);
       border-radius: 8px;
       padding: 14px 16px;
       z-index: 150;
@@ -199,9 +199,9 @@
       pointer-events: none;
     }
     .chapter-panel.show { opacity: 1; transform: translateY(0); }
-    .chapter-panel.mars-theme {
-      background: linear-gradient(135deg, rgba(0,0,0,0.92) 0%, rgba(40,10,0,0.92) 100%);
-      border-color: var(--mars-orange);
+    .chapter-panel.bear-theme {
+      background: linear-gradient(135deg, rgba(15,24,16,0.95) 0%, rgba(120,53,15,0.92) 100%);
+      border-color: var(--earth-brown);
     }
     .chapter-panel-header {
       display: flex;
@@ -212,17 +212,17 @@
     .chapter-panel-title {
       font-family: 'Orbitron', sans-serif;
       font-size: 12px;
-      color: var(--neon-purple);
-      text-shadow: 0 0 8px var(--neon-purple);
+      color: var(--leaf-green);
+      text-shadow: 0 0 8px var(--leaf-green);
       letter-spacing: 2px;
     }
-    .chapter-panel.mars-theme .chapter-panel-title {
-      color: var(--mars-orange);
-      text-shadow: 0 0 8px var(--mars-orange);
+    .chapter-panel.bear-theme .chapter-panel-title {
+      color: var(--earth-brown);
+      text-shadow: 0 0 8px var(--earth-brown);
     }
     .chapter-panel-status {
       font-size: 9px;
-      color: var(--neon-green);
+      color: var(--bright-green);
       letter-spacing: 1px;
     }
     .chapter-panel-story {
@@ -231,17 +231,17 @@
       line-height: 1.5;
     }
     .chapter-panel-story .neon {
-      color: var(--neon-cyan);
+      color: var(--bright-green);
       font-weight: 600;
     }
-    .chapter-panel.mars-theme .chapter-panel-story .neon {
-      color: var(--mars-orange);
+    .chapter-panel.bear-theme .chapter-panel-story .neon {
+      color: var(--earth-brown);
     }
 
     .victory {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: radial-gradient(ellipse at center, rgba(0,20,40,0.95) 0%, rgba(0,0,0,0.98) 100%);
+      background: radial-gradient(ellipse at center, rgba(15,40,20,0.95) 0%, rgba(0,0,0,0.98) 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -252,37 +252,37 @@
       transition: all 0.5s;
     }
     .victory.show { opacity: 1; visibility: visible; }
-    .victory.mars-ending {
-      background: radial-gradient(ellipse at center, rgba(40,15,0,0.95) 0%, rgba(0,0,0,0.98) 100%);
+    .victory.bear-ending {
+      background: radial-gradient(ellipse at center, rgba(40,25,15,0.95) 0%, rgba(0,0,0,0.98) 100%);
     }
     .victory-badge {
       width: 70px;
       height: 70px;
-      border: 2px solid var(--neon-green);
+      border: 2px solid var(--bright-green);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 35px;
       margin-bottom: 15px;
-      box-shadow: 0 0 25px var(--neon-green);
+      box-shadow: 0 0 25px var(--bright-green);
     }
-    .victory.mars-ending .victory-badge {
-      border-color: var(--mars-orange);
-      box-shadow: 0 0 25px var(--mars-orange);
+    .victory.bear-ending .victory-badge {
+      border-color: var(--earth-brown);
+      box-shadow: 0 0 25px var(--earth-brown);
     }
     .victory-title {
       font-family: 'Orbitron', sans-serif;
       font-size: 18px;
       font-weight: 900;
-      color: var(--neon-green);
-      text-shadow: 0 0 15px var(--neon-green);
+      color: var(--bright-green);
+      text-shadow: 0 0 15px var(--bright-green);
       letter-spacing: 4px;
       margin-bottom: 8px;
     }
-    .victory.mars-ending .victory-title {
-      color: var(--mars-orange);
-      text-shadow: 0 0 15px var(--mars-orange);
+    .victory.bear-ending .victory-title {
+      color: var(--earth-brown);
+      text-shadow: 0 0 15px var(--earth-brown);
     }
     .victory-subtitle {
       font-size: 11px;
@@ -301,30 +301,30 @@
       line-height: 1.5;
       margin: 8px 0;
     }
-    .victory-story .em { color: var(--neon-cyan); font-weight: 600; }
-    .victory.mars-ending .victory-story .em { color: var(--mars-orange); }
+    .victory-story .em { color: var(--bright-green); font-weight: 600; }
+    .victory.bear-ending .victory-story .em { color: var(--earth-brown); }
     .victory-btn {
       font-family: 'Orbitron', sans-serif;
       padding: 12px 30px;
       font-size: 10px;
       letter-spacing: 2px;
       background: transparent;
-      color: var(--neon-cyan);
-      border: 1px solid var(--neon-cyan);
+      color: var(--bright-green);
+      border: 1px solid var(--bright-green);
       cursor: pointer;
       transition: all 0.3s;
       pointer-events: auto;
     }
-    .victory.mars-ending .victory-btn {
-      color: var(--mars-orange);
-      border-color: var(--mars-orange);
+    .victory.bear-ending .victory-btn {
+      color: var(--earth-brown);
+      border-color: var(--earth-brown);
     }
     .victory-btn:active {
-      background: var(--neon-cyan);
+      background: var(--bright-green);
       color: #000;
     }
-    .victory.mars-ending .victory-btn:active {
-      background: var(--mars-orange);
+    .victory.bear-ending .victory-btn:active {
+      background: var(--earth-brown);
     }
   </style>
 
@@ -365,55 +365,50 @@
   <div class="corner corner-br"></div>
 
   <div class="loader" id="loader">
-    <div class="loader-title">EXODUS 2157</div>
+    <div class="loader-title">FOREST TALES</div>
     <div class="loader-bar"></div>
   </div>
 
   <div class="top-bar">
     <div class="top-row">
-      <div class="logo">EXODUS<span>2157</span></div>
-      <div class="status">SYSTEM <span class="online">ONLINE</span><br>AR TRACKING</div>
+      <div class="logo">FOREST<span>TALES</span></div>
+      <div class="status">AR <span class="online">ACTIVE</span><br>TRACKING</div>
     </div>
     <div class="progress-row">
-      <div class="chapter-dot current" id="dot-earth">
-        <span class="dot-icon">🌍</span>
-        <span class="dot-text">Earth</span>
+      <div class="chapter-dot current" id="dot-forest">
+        <span class="dot-icon">�</span>
+        <span class="dot-text">Forest</span>
       </div>
-      <div class="chapter-dot" id="dot-rocket">
-        <span class="dot-icon">🚀</span>
-        <span class="dot-text">Exodus</span>
+      <div class="chapter-dot" id="dot-bear">
+        <span class="dot-icon">�</span>
+        <span class="dot-text">Bear</span>
       </div>
-      <div class="chapter-dot" id="dot-moon">
-        <span class="dot-icon">🌙</span>
-        <span class="dot-text">Moon</span>
-      </div>
-      <span class="dot-or">OR</span>
-      <div class="chapter-dot" id="dot-mars">
-        <span class="dot-icon">🔴</span>
-        <span class="dot-text">Mars</span>
+      <div class="chapter-dot" id="dot-text">
+        <span class="dot-icon">�</span>
+        <span class="dot-text">Message</span>
       </div>
     </div>
   </div>
 
   <div class="bottom-bar">
-    <div class="scan-hint">SCAN <span class="target" id="scan-target">EARTH</span></div>
+    <div class="scan-hint">SCAN <span class="target" id="scan-target">FOREST</span></div>
   </div>
 
   <div class="chapter-panel" id="chapter-panel">
     <div class="chapter-panel-header">
-      <div class="chapter-panel-title" id="panel-title">CHAPTER I: THE BLIGHT</div>
-      <div class="chapter-panel-status">UNLOCKED</div>
+      <div class="chapter-panel-title" id="panel-title">CHAPTER I: THE FOREST</div>
+      <div class="chapter-panel-status">DISCOVERED</div>
     </div>
     <div class="chapter-panel-story" id="panel-story">Story content...</div>
   </div>
 
   <div class="victory" id="victory">
-    <div class="victory-badge" id="victory-badge">🛡️</div>
-    <div class="victory-title" id="victory-title">COMPLETE</div>
-    <div class="victory-subtitle" id="victory-subtitle">HUMANITY PRESERVED</div>
+    <div class="victory-badge" id="victory-badge">🌲</div>
+    <div class="victory-title" id="victory-title">JOURNEY COMPLETE</div>
+    <div class="victory-subtitle" id="victory-subtitle">FOREST EXPLORED</div>
     <div class="victory-story" id="victory-story">
-      <p>The <span class="em">Exodus Initiative</span> succeeded.</p>
-      <p>12,000 survivors call <span class="em">Luna Colony</span> home.</p>
+      <p>You have <span class="em">explored the forest</span> and met its guardian.</p>
+      <p>The <span class="em">ancient bear</span> shared wisdom with you.</p>
     </div>
     <button class="victory-btn" onclick="resetStory()">RESTART</button>
   </div>
@@ -425,41 +420,96 @@
     arjs="sourceType: webcam; trackingMethod: best; debugUIEnabled: false;"
     id="scene">
 
-    <a-entity light="type: ambient; intensity: 0.7"></a-entity>
-    <a-entity light="type: directional; intensity: 0.9; castShadow: true" position="2 4 2"></a-entity>
+    <a-entity light="type: ambient; intensity: 0.8"></a-entity>
+    <a-entity light="type: directional; intensity: 1.0; castShadow: true" position="2 4 2"></a-entity>
 
     <a-assets>
-      <img id="earth-texture" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Solarsystemscope_texture_8k_earth_daymap.jpg/1024px-Solarsystemscope_texture_8k_earth_daymap.jpg" crossorigin="anonymous">
-      <img id="mars-texture" src="https://www.solarsystemscope.com/textures/download/2k_mars.jpg" crossorigin="anonymous">
+      <img id="bark-texture" src="https://cdn.glitch.global/341720a2-4c9a-4875-8ca7-3e8e05a3e71c/bark.jpg" crossorigin="anonymous">
+      <img id="grass-texture" src="https://cdn.glitch.global/341720a2-4c9a-4875-8ca7-3e8e05a3e71c/grass.jpg" crossorigin="anonymous">
     </a-assets>
 
-    <a-nft type="nft" url="./earth" smooth="true" smoothCount="50" smoothTolerance="0.08" smoothThreshold="15" id="marker-earth">
+    <!-- Forest marker - shows forest scene -->
+    <a-nft type="nft" url="./forest/forest" smooth="true" smoothCount="50" smoothTolerance="0.08" smoothThreshold="15" id="marker-forest">
       <a-entity position="0 0 0" super-smooth>
-        <a-sphere position="100 170 -330" radius="150" segments-width="64" segments-height="64" material="src: #earth-texture; roughness: 1; metalness: 0">
-          <a-animation attribute="rotation" from="0 0 0" to="0 360 0" dur="20000" repeat="indefinite" easing="linear"></a-animation>
-        </a-sphere>
+        <!-- Forest ground -->
+        <a-plane position="0 -200 0" rotation="-90 0 0" width="600" height="600" color="#2d5016"></a-plane>
+        
+        <!-- Trees -->
+        <a-cylinder position="-150 -100 -200" radius="20" height="200" color="#78350f"></a-cylinder>
+        <a-cone position="-150 50 -200" radius-bottom="60" radius-top="10" height="120" color="#2d5016"></a-cone>
+        <a-cone position="-150 120 -200" radius-bottom="50" radius-top="5" height="100" color="#16a34a"></a-cone>
+        
+        <a-cylinder position="150 -100 -200" radius="20" height="200" color="#78350f"></a-cylinder>
+        <a-cone position="150 50 -200" radius-bottom="60" radius-top="10" height="120" color="#2d5016"></a-cone>
+        <a-cone position="150 120 -200" radius-bottom="50" radius-top="5" height="100" color="#16a34a"></a-cone>
+        
+        <a-cylinder position="0 -100 -350" radius="25" height="220" color="#78350f"></a-cylinder>
+        <a-cone position="0 60 -350" radius-bottom="70" radius-top="10" height="140" color="#2d5016"></a-cone>
+        <a-cone position="0 140 -350" radius-bottom="60" radius-top="5" height="120" color="#16a34a"></a-cone>
       </a-entity>
     </a-nft>
 
-    <a-nft type="nft" url="./rocket" smooth="true" smoothCount="50" smoothTolerance="0.08" smoothThreshold="15" id="marker-rocket">
+    <!-- Bear marker - shows bear in forest context -->
+    <a-nft type="nft" url="./bear/grizzly-bear" smooth="true" smoothCount="50" smoothTolerance="0.08" smoothThreshold="15" id="marker-bear">
       <a-entity position="0 0 0" super-smooth>
-        <a-entity gltf-model="./rocket.glb" position="100 -240 130" scale="40 40 40" rotation="270 0 0"></a-entity>
-      </a-entity>
-    </a-nft>
-
-    <a-nft type="nft" url="./moon" smooth="true" smoothCount="50" smoothTolerance="0.08" smoothThreshold="15" id="marker-moon">
-      <a-entity position="0 0 0" super-smooth>
-        <a-entity gltf-model="./moon.glb" position="50 -100 -300" scale="40 40 40" rotation="0 0 0">
-          <a-animation attribute="rotation" from="0 0 0" to="0 360 0" dur="30000" repeat="indefinite" easing="linear"></a-animation>
+        <!-- Small forest ground -->
+        <a-plane position="0 -200 0" rotation="-90 0 0" width="400" height="400" color="#2d5016" opacity="0.8"></a-plane>
+        
+        <!-- Bear body (simplified) -->
+        <a-entity position="0 -120 -200">
+          <!-- Body -->
+          <a-sphere position="0 0 0" radius="50" color="#78350f"></a-sphere>
+          <a-sphere position="0 30 30" radius="35" color="#78350f"></a-sphere>
+          <!-- Head -->
+          <a-sphere position="0 50 50" radius="30" color="#92400e"></a-sphere>
+          <!-- Ears -->
+          <a-sphere position="-20 70 50" radius="12" color="#78350f"></a-sphere>
+          <a-sphere position="20 70 50" radius="12" color="#78350f"></a-sphere>
+          <!-- Snout -->
+          <a-cylinder position="0 45 75" radius="12" height="20" rotation="90 0 0" color="#a0522d"></a-cylinder>
+          <!-- Eyes -->
+          <a-sphere position="-10 55 70" radius="4" color="#000000"></a-sphere>
+          <a-sphere position="10 55 70" radius="4" color="#000000"></a-sphere>
+          <!-- Legs -->
+          <a-cylinder position="-25 -35 -10" radius="12" height="40" color="#78350f"></a-cylinder>
+          <a-cylinder position="25 -35 -10" radius="12" height="40" color="#78350f"></a-cylinder>
+          <a-cylinder position="-25 -35 20" radius="12" height="40" color="#78350f"></a-cylinder>
+          <a-cylinder position="25 -35 20" radius="12" height="40" color="#78350f"></a-cylinder>
         </a-entity>
+        
+        <!-- Background tree -->
+        <a-cylinder position="120 -100 -250" radius="15" height="150" color="#78350f"></a-cylinder>
+        <a-cone position="120 40 -250" radius-bottom="45" radius-top="5" height="90" color="#2d5016"></a-cone>
       </a-entity>
     </a-nft>
 
-    <a-nft type="nft" url="./mars" smooth="true" smoothCount="50" smoothTolerance="0.08" smoothThreshold="15" id="marker-mars">
+    <!-- Text marker - shows speech bubble near bear -->
+    <a-nft type="nft" url="./text/text" smooth="true" smoothCount="50" smoothTolerance="0.08" smoothThreshold="15" id="marker-text">
       <a-entity position="0 0 0" super-smooth>
-        <a-sphere position="100 170 -330" radius="140" segments-width="64" segments-height="64" material="src: #mars-texture; roughness: 1; metalness: 0">
-          <a-animation attribute="rotation" from="0 0 0" to="0 360 0" dur="25000" repeat="indefinite" easing="linear"></a-animation>
-        </a-sphere>
+        <!-- Forest ground -->
+        <a-plane position="0 -200 0" rotation="-90 0 0" width="400" height="400" color="#2d5016" opacity="0.6"></a-plane>
+        
+        <!-- Simplified bear -->
+        <a-entity position="-80 -120 -200" scale="0.8 0.8 0.8">
+          <a-sphere position="0 0 0" radius="50" color="#78350f"></a-sphere>
+          <a-sphere position="0 50 50" radius="30" color="#92400e"></a-sphere>
+          <a-sphere position="-20 70 50" radius="12" color="#78350f"></a-sphere>
+          <a-sphere position="20 70 50" radius="12" color="#78350f"></a-sphere>
+        </a-entity>
+        
+        <!-- Speech bubble -->
+        <a-entity position="100 0 -200">
+          <!-- Bubble background -->
+          <a-plane position="0 0 0" width="180" height="100" color="#ffffff" opacity="0.95"></a-plane>
+          <a-plane position="0 0 1" width="170" height="90" color="#f0f0f0"></a-plane>
+          <!-- Bubble tail -->
+          <a-triangle position="-85 -30 1" rotation="0 0 -45" color="#ffffff" scale="15 15 15"></a-triangle>
+          
+          <!-- Text lines -->
+          <a-text value="Hello, traveler!" position="-80 30 2" color="#2d5016" width="300" font="roboto"></a-text>
+          <a-text value="Welcome to my forest." position="-80 10 2" color="#2d5016" width="300" font="roboto"></a-text>
+          <a-text value="May nature guide you!" position="-80 -10 2" color="#16a34a" width="300" font="roboto"></a-text>
+        </a-entity>
       </a-entity>
     </a-nft>
 
@@ -468,40 +518,30 @@
 
   <script>
     const storyData = {
-      earth: {
-        title: "CHAPTER I: THE BLIGHT",
-        story: `The year is <span class="neon">2157</span>. A mysterious pathogen known as "The Blight" has consumed <span class="neon">78% of Earth's surface</span>. Crops wither, oceans turn toxic, and the sky burns crimson. In just 3 years, <span class="neon">7.2 billion souls</span> have been lost. The remaining survivors huddle in sealed domes, waiting for salvation.`
+      forest: {
+        title: "CHAPTER I: THE ANCIENT FOREST",
+        story: `You enter a <span class="neon">mystical forest</span>, where towering trees reach toward the sky. The air is fresh with the scent of <span class="neon">pine and moss</span>. Shafts of golden sunlight pierce through the canopy, illuminating the forest floor. This place feels <span class="neon">alive with magic</span>.`
       },
-      rocket: {
-        title: "CHAPTER II: THE EXODUS",
-        story: `Project <span class="neon">EXODUS</span> initiates. The last <span class="neon">12,000 survivors</span> board the massive Ark vessels - humanity's final hope. As fusion engines roar to life, the ships ascend through the poisoned atmosphere. Below, Earth grows smaller - a dying ember in the void. Choose your destination: <span class="neon">MOON</span> or <span class="neon">MARS</span>.`
+      bear: {
+        title: "CHAPTER II: THE GUARDIAN",
+        story: `A <span class="neon">majestic bear</span> emerges from the shadows. This is no ordinary creature - it is the <span class="neon">ancient guardian</span> of the forest. Its eyes gleam with wisdom accumulated over centuries. The bear acknowledges your presence with a gentle nod, as if it has been <span class="neon">expecting you</span>.`
       },
-      moon: {
-        title: "CHAPTER III: LUNA COLONY",
-        story: `After 72 hours of travel, <span class="neon">Luna Colony Alpha</span> emerges on the horizon. The crystalline domes shimmer with artificial atmosphere, a beacon of hope against the darkness of space. As the Ark vessels dock, a new chapter begins. Humanity has survived - and among the stars, we shall rebuild.`
-      },
-      mars: {
-        title: "CHAPTER III: THE RED FRONTIER",
-        story: `After <span class="neon">7 months</span> of interplanetary travel, the rust-colored sphere of <span class="neon">Mars</span> fills the viewport. The Olympus Mons base awaits - humanity's boldest outpost. Unlike the Moon, Mars offers atmosphere, water ice, and a future. This is not just survival - this is <span class="neon">a new beginning</span>.`
+      text: {
+        title: "CHAPTER III: THE MESSAGE",
+        story: `The guardian bear speaks to you in a voice that echoes through your mind. <span class="neon">"Welcome, traveler. You have shown respect by entering my domain peacefully. May the wisdom of nature guide your path, and may you always remember: we are all connected in this great forest of life."</span>`
       }
     };
 
     const endings = {
-      moon: {
-        badge: "🌙",
-        title: "LUNA COMPLETE",
-        subtitle: "SANCTUARY ACHIEVED",
-        story: `<p>The <span class="em">Exodus Initiative</span> succeeded.</p><p><span class="em">12,000 survivors</span> call Luna Colony home.</p><p>Close to Earth, we watch and wait for her healing.</p>`
-      },
-      mars: {
-        badge: "🔴",
-        title: "MARS COMPLETE",
-        subtitle: "NEW WORLD CONQUERED",
-        story: `<p>The <span class="em">Red Frontier</span> is ours.</p><p><span class="em">12,000 pioneers</span> begin terraforming Mars.</p><p>A new planet. A new species. <span class="em">Homo Martis</span> is born.</p>`
+      complete: {
+        badge: "�",
+        title: "JOURNEY COMPLETE",
+        subtitle: "FOREST WISDOM GAINED",
+        story: `<p>You have <span class="em">explored the mystical forest</span>.</p><p>The <span class="em">ancient guardian bear</span> shared its wisdom.</p><p>You leave with a deeper connection to <span class="em">nature</span>.</p>`
       }
     };
 
-    let state = { earth: false, rocket: false, destination: null };
+    let state = { forest: false, bear: false, text: false };
 
     const loader = document.getElementById('loader');
     const scanTarget = document.getElementById('scan-target');
@@ -511,17 +551,16 @@
     const victory = document.getElementById('victory');
 
     const dots = {
-      earth: document.getElementById('dot-earth'),
-      rocket: document.getElementById('dot-rocket'),
-      moon: document.getElementById('dot-moon'),
-      mars: document.getElementById('dot-mars')
+      forest: document.getElementById('dot-forest'),
+      bear: document.getElementById('dot-bear'),
+      text: document.getElementById('dot-text')
     };
 
     document.getElementById('scene').addEventListener('loaded', () => {
       setTimeout(() => loader.classList.add('hidden'), 1500);
     });
 
-    const markerIds = ['marker-earth', 'marker-rocket', 'marker-moon', 'marker-mars'];
+    const markerIds = ['marker-forest', 'marker-bear', 'marker-text'];
     markerIds.forEach(id => {
       const marker = document.getElementById(id);
       if (marker) {
@@ -532,47 +571,44 @@
     });
 
     function onMarkerFound(type) {
-      const isMars = type === 'mars';
-      chapterPanel.classList.toggle('mars-theme', isMars);
+      const isBear = type === 'bear';
+      chapterPanel.classList.toggle('bear-theme', isBear);
       panelTitle.textContent = storyData[type].title;
       panelStory.innerHTML = storyData[type].story;
       chapterPanel.classList.add('show');
 
-      if (type === 'earth' && !state.earth) {
-        state.earth = true;
+      if (type === 'forest' && !state.forest) {
+        state.forest = true;
         updateUI();
-      } else if (type === 'rocket' && state.earth && !state.rocket) {
-        state.rocket = true;
+      } else if (type === 'bear' && state.forest && !state.bear) {
+        state.bear = true;
         updateUI();
-      } else if ((type === 'moon' || type === 'mars') && state.rocket && !state.destination) {
-        state.destination = type;
+      } else if (type === 'text' && state.bear && !state.text) {
+        state.text = true;
         updateUI();
-        setTimeout(() => showVictory(type), 1500);
+        setTimeout(() => showVictory(), 1500);
       }
     }
 
     function updateUI() {
-      dots.earth.classList.toggle('active', state.earth);
-      dots.earth.classList.toggle('current', !state.earth);
+      dots.forest.classList.toggle('active', state.forest);
+      dots.forest.classList.toggle('current', !state.forest);
 
-      dots.rocket.classList.toggle('active', state.rocket);
-      dots.rocket.classList.toggle('current', state.earth && !state.rocket);
+      dots.bear.classList.toggle('active-bear', state.bear);
+      dots.bear.classList.toggle('current', state.forest && !state.bear);
 
-      const choosingDest = state.rocket && !state.destination;
-      dots.moon.classList.toggle('active', state.destination === 'moon');
-      dots.moon.classList.toggle('current', choosingDest);
-      dots.mars.classList.toggle('active-mars', state.destination === 'mars');
-      dots.mars.classList.toggle('current', choosingDest);
+      dots.text.classList.toggle('active', state.text);
+      dots.text.classList.toggle('current', state.bear && !state.text);
 
-      if (!state.earth) scanTarget.textContent = 'EARTH';
-      else if (!state.rocket) scanTarget.textContent = 'ROCKET';
-      else if (!state.destination) scanTarget.textContent = 'MOON or MARS';
+      if (!state.forest) scanTarget.textContent = 'FOREST';
+      else if (!state.bear) scanTarget.textContent = 'BEAR';
+      else if (!state.text) scanTarget.textContent = 'TEXT';
       else scanTarget.textContent = 'COMPLETE';
     }
 
-    function showVictory(type) {
-      const end = endings[type];
-      victory.classList.toggle('mars-ending', type === 'mars');
+    function showVictory() {
+      const end = endings.complete;
+      victory.classList.remove('bear-ending');
       document.getElementById('victory-badge').textContent = end.badge;
       document.getElementById('victory-title').textContent = end.title;
       document.getElementById('victory-subtitle').textContent = end.subtitle;
@@ -581,12 +617,12 @@
     }
 
     function resetStory() {
-      state = { earth: false, rocket: false, destination: null };
-      victory.classList.remove('show', 'mars-ending');
-      chapterPanel.classList.remove('mars-theme');
-      Object.values(dots).forEach(d => d.classList.remove('active', 'active-mars', 'current'));
-      dots.earth.classList.add('current');
-      scanTarget.textContent = 'EARTH';
+      state = { forest: false, bear: false, text: false };
+      victory.classList.remove('show', 'bear-ending');
+      chapterPanel.classList.remove('bear-theme');
+      Object.values(dots).forEach(d => d.classList.remove('active', 'active-bear', 'current'));
+      dots.forest.classList.add('current');
+      scanTarget.textContent = 'FOREST';
     }
   </script>
 </body>
