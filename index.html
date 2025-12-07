@@ -424,15 +424,15 @@
     <a-entity light="type: directional; intensity: 1.0; castShadow: true" position="2 4 2"></a-entity>
 
     <a-assets>
-      <img id="bark-texture" src="https://cdn.glitch.global/341720a2-4c9a-4875-8ca7-3e8e05a3e71c/bark.jpg" crossorigin="anonymous">
-      <img id="grass-texture" src="https://cdn.glitch.global/341720a2-4c9a-4875-8ca7-3e8e05a3e71c/grass.jpg" crossorigin="anonymous">
+      <a-asset-item id="forest-glb" src="./forest.glb"></a-asset-item>
+      <a-asset-item id="bear-glb" src="./bear.glb"></a-asset-item>
     </a-assets>
 
     <!-- Forest marker - shows forest scene -->
     <a-nft type="nft" url="./forest/forest" smooth="true" smoothCount="50" smoothTolerance="0.08" smoothThreshold="15" id="marker-forest">
       <a-entity position="0 0 0" super-smooth id="forest-content">
         <!-- 3D Forest Model from Sketchfab -->
-        <a-entity gltf-model="./forest.glb" position="0 -100 -200" scale="1 1 1" rotation="0 0 0" id="forest-model"></a-entity>
+        <a-entity gltf-model="#forest-glb" position="0 0 -300" scale="50 50 50" rotation="0 0 0" id="forest-model"></a-entity>
       </a-entity>
     </a-nft>
 
@@ -440,10 +440,10 @@
     <a-nft type="nft" url="./bear/grizzly-bear" smooth="true" smoothCount="50" smoothTolerance="0.08" smoothThreshold="15" id="marker-bear">
       <a-entity position="0 0 0" super-smooth id="bear-content">
         <!-- Keep the forest visible -->
-        <a-entity gltf-model="./forest.glb" position="0 -100 -200" scale="1 1 1" rotation="0 0 0" opacity="0.8"></a-entity>
+        <a-entity gltf-model="#forest-glb" position="0 0 -350" scale="40 40 40" rotation="0 0 0" opacity="0.8"></a-entity>
         
         <!-- 3D Bear Model from Sketchfab - positioned IN the forest -->
-        <a-entity gltf-model="./bear.glb" position="0 -80 -150" scale="1 1 1" rotation="0 0 0" id="bear-model"></a-entity>
+        <a-entity gltf-model="#bear-glb" position="0 -50 -250" scale="5 5 5" rotation="0 180 0" id="bear-model"></a-entity>
       </a-entity>
     </a-nft>
 
@@ -451,21 +451,21 @@
     <a-nft type="nft" url="./text/text" smooth="true" smoothCount="50" smoothTolerance="0.08" smoothThreshold="15" id="marker-text">
       <a-entity position="0 0 0" super-smooth id="text-content">
         <!-- Keep the forest visible (lighter) -->
-        <a-entity gltf-model="./forest.glb" position="0 -100 -200" scale="1 1 1" rotation="0 0 0" opacity="0.6"></a-entity>
+        <a-entity gltf-model="#forest-glb" position="0 0 -400" scale="35 35 35" rotation="0 0 0" opacity="0.5"></a-entity>
         
         <!-- Keep the Bear Model visible -->
-        <a-entity gltf-model="./bear.glb" position="-50 -80 -150" scale="1 1 1" rotation="0 30 0"></a-entity>
+        <a-entity gltf-model="#bear-glb" position="-80 -50 -250" scale="4 4 4" rotation="0 45 0"></a-entity>
         
         <!-- Speech Bubble with text -->
-        <a-entity position="80 0 -120" rotation="0 -20 0">
+        <a-entity position="100 20 -200" rotation="0 -20 0">
           <!-- Bubble background -->
-          <a-plane position="0 0 0" width="120" height="80" color="#ffffff" opacity="0.95" material="side: double"></a-plane>
-          <a-plane position="0 0 1" width="110" height="70" color="#f0f0f0" material="side: double"></a-plane>
+          <a-plane position="0 0 0" width="140" height="90" color="#ffffff" opacity="0.95" material="side: double"></a-plane>
+          <a-plane position="0 0 1" width="130" height="80" color="#f0f0f0" material="side: double"></a-plane>
           
           <!-- Text lines -->
-          <a-text value="Hello, traveler!" position="-50 25 2" color="#2d5016" width="200" align="center"></a-text>
-          <a-text value="Welcome to my forest." position="-50 5 2" color="#2d5016" width="200" align="center"></a-text>
-          <a-text value="May nature guide you!" position="-50 -15 2" color="#16a34a" width="200" align="center"></a-text>
+          <a-text value="Hello, traveler!" position="-60 30 2" color="#2d5016" width="250" align="center"></a-text>
+          <a-text value="Welcome to my forest." position="-60 10 2" color="#2d5016" width="250" align="center"></a-text>
+          <a-text value="May nature guide you!" position="-60 -10 2" color="#16a34a" width="250" align="center"></a-text>
         </a-entity>
       </a-entity>
     </a-nft>
@@ -541,22 +541,31 @@
     });
 
     function onMarkerFound(type) {
+      console.log('🎯 Marker found:', type);
+      console.log('📊 Current state:', state);
+      
       // Check hierarchy: can only scan in order and once
       if (type === 'forest') {
         if (state.forest) {
           // Already scanned forest, show message
+          console.log('⚠️ Forest already scanned');
           showWarning('Forest already discovered!');
           return;
         }
+        console.log('✅ Forest scanned for first time');
         currentlyScanning = 'forest';
         state.forest = true;
         
         // Enable bear marker content for next scan
-        if (markerContents.bear) markerContents.bear.setAttribute('visible', 'true');
+        if (markerContents.bear) {
+          markerContents.bear.setAttribute('visible', 'true');
+          console.log('✅ Bear content enabled');
+        }
         
       } else if (type === 'bear') {
         if (!state.forest) {
           // Must scan forest first
+          console.log('⚠️ Tried to scan bear without forest');
           showWarning('Find the forest first!');
           return;
         }
