@@ -430,44 +430,42 @@
 
     <!-- Forest marker - shows forest scene -->
     <a-nft type="nft" url="./forest/forest" smooth="true" smoothCount="50" smoothTolerance="0.08" smoothThreshold="15" id="marker-forest">
-      <a-entity position="0 0 0" super-smooth>
-        <!-- 3D Forest Model -->
-        <a-entity gltf-model="./forest.glb" position="0 -150 -250" scale="80 80 80" rotation="0 0 0"></a-entity>
+      <a-entity position="0 0 0" super-smooth id="forest-content">
+        <!-- 3D Forest Model from Sketchfab -->
+        <a-entity gltf-model="./forest.glb" position="0 -100 -200" scale="1 1 1" rotation="0 0 0" id="forest-model"></a-entity>
       </a-entity>
     </a-nft>
 
-    <!-- Bear marker - shows bear in forest context -->
+    <!-- Bear marker - shows bear in the forest context -->
     <a-nft type="nft" url="./bear/grizzly-bear" smooth="true" smoothCount="50" smoothTolerance="0.08" smoothThreshold="15" id="marker-bear">
-      <a-entity position="0 0 0" super-smooth>
-        <!-- Small forest ground for context -->
-        <a-plane position="0 -200 0" rotation="-90 0 0" width="400" height="400" color="#2d5016" opacity="0.7"></a-plane>
+      <a-entity position="0 0 0" super-smooth id="bear-content">
+        <!-- Keep the forest visible -->
+        <a-entity gltf-model="./forest.glb" position="0 -100 -200" scale="1 1 1" rotation="0 0 0" opacity="0.8"></a-entity>
         
-        <!-- 3D Bear Model -->
-        <a-entity gltf-model="./bear.glb" position="0 -100 -200" scale="60 60 60" rotation="0 180 0"></a-entity>
-        
-        <!-- Background tree -->
-        <a-cylinder position="150 -100 -280" radius="15" height="150" color="#78350f"></a-cylinder>
-        <a-cone position="150 40 -280" radius-bottom="45" radius-top="5" height="90" color="#2d5016"></a-cone>
+        <!-- 3D Bear Model from Sketchfab - positioned IN the forest -->
+        <a-entity gltf-model="./bear.glb" position="0 -80 -150" scale="1 1 1" rotation="0 0 0" id="bear-model"></a-entity>
       </a-entity>
     </a-nft>
 
     <!-- Text marker - shows speech bubble near bear -->
     <a-nft type="nft" url="./text/text" smooth="true" smoothCount="50" smoothTolerance="0.08" smoothThreshold="15" id="marker-text">
-      <a-entity position="0 0 0" super-smooth>
-        <!-- Forest ground -->
-        <a-plane position="0 -200 0" rotation="-90 0 0" width="400" height="400" color="#2d5016" opacity="0.6"></a-plane>
+      <a-entity position="0 0 0" super-smooth id="text-content">
+        <!-- Keep the forest visible (lighter) -->
+        <a-entity gltf-model="./forest.glb" position="0 -100 -200" scale="1 1 1" rotation="0 0 0" opacity="0.6"></a-entity>
         
-        <!-- Bear Model (smaller) -->
-        <a-entity gltf-model="./bear.glb" position="-120 -120 -200" scale="40 40 40" rotation="0 45 0"></a-entity>
+        <!-- Keep the Bear Model visible -->
+        <a-entity gltf-model="./bear.glb" position="-50 -80 -150" scale="1 1 1" rotation="0 30 0"></a-entity>
         
-        <!-- 3D Speech Bubble Model -->
-        <a-entity gltf-model="./text.glb" position="100 0 -200" scale="40 40 40" rotation="0 0 0"></a-entity>
-        
-        <!-- Text lines on top of bubble -->
-        <a-entity position="100 0 -180">
-          <a-text value="Hello, traveler!" position="-80 30 2" color="#2d5016" width="300" font="roboto"></a-text>
-          <a-text value="Welcome to my forest." position="-80 10 2" color="#2d5016" width="300" font="roboto"></a-text>
-          <a-text value="May nature guide you!" position="-80 -10 2" color="#16a34a" width="300" font="roboto"></a-text>
+        <!-- Speech Bubble with text -->
+        <a-entity position="80 0 -120" rotation="0 -20 0">
+          <!-- Bubble background -->
+          <a-plane position="0 0 0" width="120" height="80" color="#ffffff" opacity="0.95" material="side: double"></a-plane>
+          <a-plane position="0 0 1" width="110" height="70" color="#f0f0f0" material="side: double"></a-plane>
+          
+          <!-- Text lines -->
+          <a-text value="Hello, traveler!" position="-50 25 2" color="#2d5016" width="200" align="center"></a-text>
+          <a-text value="Welcome to my forest." position="-50 5 2" color="#2d5016" width="200" align="center"></a-text>
+          <a-text value="May nature guide you!" position="-50 -15 2" color="#16a34a" width="200" align="center"></a-text>
         </a-entity>
       </a-entity>
     </a-nft>
@@ -501,6 +499,7 @@
     };
 
     let state = { forest: false, bear: false, text: false };
+    let currentlyScanning = null;
 
     const loader = document.getElementById('loader');
     const scanTarget = document.getElementById('scan-target');
@@ -515,8 +514,20 @@
       text: document.getElementById('dot-text')
     };
 
+    // Disable markers by hiding their content until requirements are met
+    const markerContents = {
+      forest: document.getElementById('forest-content'),
+      bear: document.getElementById('bear-content'),
+      text: document.getElementById('text-content')
+    };
+
     document.getElementById('scene').addEventListener('loaded', () => {
-      setTimeout(() => loader.classList.add('hidden'), 1500);
+      setTimeout(() => {
+        loader.classList.add('hidden');
+        // Initially hide bear and text content
+        if (markerContents.bear) markerContents.bear.setAttribute('visible', 'false');
+        if (markerContents.text) markerContents.text.setAttribute('visible', 'false');
+      }, 1500);
     });
 
     const markerIds = ['marker-forest', 'marker-bear', 'marker-text'];
@@ -525,28 +536,85 @@
       if (marker) {
         const type = id.replace('marker-', '');
         marker.addEventListener('markerFound', () => onMarkerFound(type));
-        marker.addEventListener('markerLost', () => chapterPanel.classList.remove('show'));
+        marker.addEventListener('markerLost', () => onMarkerLost(type));
       }
     });
 
     function onMarkerFound(type) {
+      // Check hierarchy: can only scan in order and once
+      if (type === 'forest') {
+        if (state.forest) {
+          // Already scanned forest, show message
+          showWarning('Forest already discovered!');
+          return;
+        }
+        currentlyScanning = 'forest';
+        state.forest = true;
+        
+        // Enable bear marker content for next scan
+        if (markerContents.bear) markerContents.bear.setAttribute('visible', 'true');
+        
+      } else if (type === 'bear') {
+        if (!state.forest) {
+          // Must scan forest first
+          showWarning('Find the forest first!');
+          return;
+        }
+        if (state.bear) {
+          // Already scanned bear
+          showWarning('Bear already encountered!');
+          return;
+        }
+        currentlyScanning = 'bear';
+        state.bear = true;
+        
+        // Enable text marker content for next scan
+        if (markerContents.text) markerContents.text.setAttribute('visible', 'true');
+        
+      } else if (type === 'text') {
+        if (!state.forest) {
+          showWarning('Find the forest first!');
+          return;
+        }
+        if (!state.bear) {
+          showWarning('Find the bear first!');
+          return;
+        }
+        if (state.text) {
+          // Already scanned text
+          showWarning('Message already received!');
+          return;
+        }
+        currentlyScanning = 'text';
+        state.text = true;
+        setTimeout(() => showVictory(), 1500);
+      }
+
+      // Show story panel
       const isBear = type === 'bear';
       chapterPanel.classList.toggle('bear-theme', isBear);
       panelTitle.textContent = storyData[type].title;
       panelStory.innerHTML = storyData[type].story;
       chapterPanel.classList.add('show');
+      
+      updateUI();
+    }
 
-      if (type === 'forest' && !state.forest) {
-        state.forest = true;
-        updateUI();
-      } else if (type === 'bear' && state.forest && !state.bear) {
-        state.bear = true;
-        updateUI();
-      } else if (type === 'text' && state.bear && !state.text) {
-        state.text = true;
-        updateUI();
-        setTimeout(() => showVictory(), 1500);
+    function onMarkerLost(type) {
+      if (currentlyScanning === type) {
+        chapterPanel.classList.remove('show');
       }
+    }
+
+    function showWarning(message) {
+      // Show warning in scan target
+      const originalText = scanTarget.textContent;
+      scanTarget.textContent = message;
+      scanTarget.style.color = '#ff6b6b';
+      setTimeout(() => {
+        updateScanTarget();
+        scanTarget.style.color = '';
+      }, 2000);
     }
 
     function updateUI() {
@@ -559,6 +627,10 @@
       dots.text.classList.toggle('active', state.text);
       dots.text.classList.toggle('current', state.bear && !state.text);
 
+      updateScanTarget();
+    }
+
+    function updateScanTarget() {
       if (!state.forest) scanTarget.textContent = 'FOREST';
       else if (!state.bear) scanTarget.textContent = 'BEAR';
       else if (!state.text) scanTarget.textContent = 'TEXT';
@@ -577,11 +649,18 @@
 
     function resetStory() {
       state = { forest: false, bear: false, text: false };
+      currentlyScanning = null;
       victory.classList.remove('show', 'bear-ending');
-      chapterPanel.classList.remove('bear-theme');
+      chapterPanel.classList.remove('bear-theme', 'show');
       Object.values(dots).forEach(d => d.classList.remove('active', 'active-bear', 'current'));
       dots.forest.classList.add('current');
-      scanTarget.textContent = 'FOREST';
+      
+      // Reset marker visibility
+      if (markerContents.forest) markerContents.forest.setAttribute('visible', 'true');
+      if (markerContents.bear) markerContents.bear.setAttribute('visible', 'false');
+      if (markerContents.text) markerContents.text.setAttribute('visible', 'false');
+      
+      updateScanTarget();
     }
   </script>
 </body>
