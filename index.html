@@ -30,304 +30,81 @@
       background: linear-gradient(135deg, #0f1810 0%, #1a2817 100%);
     }
 
+    /* UI + Loader + Panels unchanged except icons */
     .loader {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
+      position: fixed; inset: 0;
       background: linear-gradient(135deg, #0f1810 0%, #1a2817 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      transition: opacity 0.5s, visibility 0.5s;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 9999; transition: opacity 0.5s, visibility 0.5s;
     }
     .loader.hidden { opacity: 0; visibility: hidden; }
-    .loader-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 28px;
-      font-weight: 900;
-      color: var(--bright-green);
-      text-shadow: 0 0 20px var(--bright-green), 0 0 40px var(--leaf-green);
-      letter-spacing: 6px;
-    }
-    .loader-bar {
-      width: 150px;
-      height: 2px;
-      background: #1a2817;
-      margin-top: 20px;
-      position: relative;
-      overflow: hidden;
-    }
-    .loader-bar::after {
-      content: '';
-      position: absolute;
-      left: -50%;
-      width: 50%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, var(--bright-green), transparent);
-      animation: loadingBar 1.5s infinite;
-    }
-    @keyframes loadingBar { 0% { left: -50%; } 100% { left: 100%; } }
 
-    .top-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: linear-gradient(180deg, rgba(15,24,16,0.95) 0%, rgba(15,24,16,0.7) 70%, transparent 100%);
-      padding: 12px 15px 20px 15px;
-      z-index: 100;
-      pointer-events: none;
-    }
+    .loader-title { font-family: 'Orbitron'; font-size: 28px; font-weight: 900; color: var(--bright-green); text-shadow: 0 0 20px var(--bright-green); }
+    .loader-bar { width:150px; height:2px; background:#1a2817; margin-top:20px; overflow:hidden; position:relative; }
+    .loader-bar::after { content:''; position:absolute; left:-50%; width:50%; height:100%; background:linear-gradient(90deg,transparent,var(--bright-green),transparent); animation:loadingBar 1.5s infinite; }
+    @keyframes loadingBar { 0%{left:-50%;} 100%{left:100%;} }
 
-    .top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
+    .top-bar { position:fixed; top:0; left:0; right:0; background:linear-gradient(180deg,rgba(15,24,16,0.95),rgba(15,24,16,0.7),transparent); padding:12px 15px 20px; z-index:100; pointer-events:none; }
+    .top-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+    .logo { font-family:'Orbitron'; font-weight:900; font-size:18px; color:var(--bright-green); letter-spacing:3px; text-shadow:0 0 10px var(--bright-green); }
+    .logo span { color:var(--earth-brown); }
 
-    .logo {
-      font-family: 'Orbitron', sans-serif;
-      font-weight: 900;
-      font-size: 18px;
-      color: var(--bright-green);
-      text-shadow: 0 0 10px var(--bright-green), 0 0 20px var(--leaf-green);
-      letter-spacing: 3px;
-    }
-    .logo span { color: var(--earth-brown); text-shadow: 0 0 10px var(--bark-brown); }
+    .status { font-size:9px; color:#4a6340; text-align:right; }
+    .status .online { color:var(--bright-green); }
 
-    .status {
-      font-size: 9px;
-      color: #4a6340;
-      letter-spacing: 1px;
-      text-align: right;
-    }
-    .status .online { color: var(--bright-green); }
+    .progress-row { display:flex; gap:6px; align-items:center; }
+    .chapter-dot { flex:1; display:flex; align-items:center; gap:6px; padding:6px 8px; background:rgba(15,24,16,0.6); border:1px solid #2d5016; border-radius:6px; transition:0.3s; }
+    .chapter-dot.active { border-color:var(--bright-green); box-shadow:0 0 10px rgba(74,222,128,0.4); }
+    .chapter-dot.active-bear { border-color:var(--earth-brown); box-shadow:0 0 10px rgba(120,53,15,0.4); }
+    .chapter-dot.current { border-color:var(--gold); animation:pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{box-shadow:0 0 5px var(--gold);} 50%{box-shadow:0 0 12px var(--gold);} }
 
-    .progress-row {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-    .chapter-dot {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 8px;
-      background: rgba(15,24,16,0.6);
-      border: 1px solid #2d5016;
-      border-radius: 6px;
-      transition: all 0.3s;
-    }
-    .chapter-dot.active {
-      border-color: var(--bright-green);
-      box-shadow: 0 0 10px rgba(74,222,128,0.4);
-    }
-    .chapter-dot.active-bear {
-      border-color: var(--earth-brown);
-      box-shadow: 0 0 10px rgba(120,53,15,0.4);
-    }
-    .chapter-dot.current {
-      border-color: var(--gold);
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse { 0%, 100% { box-shadow: 0 0 5px var(--gold); } 50% { box-shadow: 0 0 12px var(--gold); } }
-    .dot-icon { font-size: 14px; }
-    .dot-text {
-      font-size: 8px;
-      color: #4a6340;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-    .chapter-dot.active .dot-text, .chapter-dot.current .dot-text { color: #aaa; }
-    .dot-or {
-      font-size: 8px;
-      color: #3a4d32;
-      padding: 0 2px;
-    }
+    .dot-icon { font-size:14px; }
+    .dot-text { font-size:8px; color:#4a6340; text-transform:uppercase; }
 
-    .bottom-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 35px;
-      background: linear-gradient(0deg, rgba(15,24,16,0.9) 0%, transparent 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
-      pointer-events: none;
-    }
-    .scan-hint {
-      font-size: 10px;
-      color: #4a6340;
-      letter-spacing: 2px;
-    }
-    .scan-hint .target {
-      color: var(--gold);
-      font-weight: 700;
-    }
+    .bottom-bar { position:fixed; bottom:0; left:0; right:0; height:35px; background:linear-gradient(0deg,rgba(15,24,16,0.9),transparent); display:flex; justify-content:center; align-items:center; z-index:100; pointer-events:none; }
+    .scan-hint { font-size:10px; color:#4a6340; }
+    .scan-hint .target { color:var(--gold); font-weight:700; }
 
-    .corner {
-      position: fixed;
-      width: 20px;
-      height: 20px;
-      border: 1px solid rgba(74,222,128,0.4);
-      z-index: 50;
-    }
-    .corner-tl { top: 8px; left: 8px; border-right: none; border-bottom: none; }
-    .corner-tr { top: 8px; right: 8px; border-left: none; border-bottom: none; }
-    .corner-bl { bottom: 8px; left: 8px; border-right: none; border-top: none; }
-    .corner-br { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+    .corner { position:fixed; width:20px; height:20px; border:1px solid rgba(74,222,128,0.4); z-index:50; }
+    .corner-tl { top:8px; left:8px; border-right:none;border-bottom:none; }
+    .corner-tr { top:8px; right:8px;border-left:none;border-bottom:none; }
+    .corner-bl { bottom:8px; left:8px;border-right:none;border-top:none; }
+    .corner-br { bottom:8px; right:8px;border-left:none;border-top:none; }
 
     .chapter-panel {
-      position: fixed;
-      bottom: 50px;
-      left: 12px;
-      right: 12px;
-      background: linear-gradient(135deg, rgba(15,24,16,0.95) 0%, rgba(45,80,22,0.92) 100%);
-      border: 1px solid var(--leaf-green);
-      border-radius: 8px;
-      padding: 14px 16px;
-      z-index: 150;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.3s;
-      pointer-events: none;
+      position:fixed; bottom:50px; left:12px; right:12px;
+      background:linear-gradient(135deg,rgba(15,24,16,0.95),rgba(45,80,22,0.92));
+      border:1px solid var(--leaf-green); border-radius:8px;
+      padding:14px 16px; z-index:150;
+      opacity:0; transform:translateY(10px); transition:0.3s; pointer-events:none;
     }
-    .chapter-panel.show { opacity: 1; transform: translateY(0); }
-    .chapter-panel.bear-theme {
-      background: linear-gradient(135deg, rgba(15,24,16,0.95) 0%, rgba(120,53,15,0.92) 100%);
-      border-color: var(--earth-brown);
-    }
-    .chapter-panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .chapter-panel-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 12px;
-      color: var(--leaf-green);
-      text-shadow: 0 0 8px var(--leaf-green);
-      letter-spacing: 2px;
-    }
-    .chapter-panel.bear-theme .chapter-panel-title {
-      color: var(--earth-brown);
-      text-shadow: 0 0 8px var(--earth-brown);
-    }
-    .chapter-panel-status {
-      font-size: 9px;
-      color: var(--bright-green);
-      letter-spacing: 1px;
-    }
-    .chapter-panel-story {
-      font-size: 13px;
-      color: #bbb;
-      line-height: 1.5;
-    }
-    .chapter-panel-story .neon {
-      color: var(--bright-green);
-      font-weight: 600;
-    }
-    .chapter-panel.bear-theme .chapter-panel-story .neon {
-      color: var(--earth-brown);
-    }
+    .chapter-panel.show { opacity:1; transform:translateY(0); }
 
-    .victory {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: radial-gradient(ellipse at center, rgba(15,40,20,0.95) 0%, rgba(0,0,0,0.98) 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 300;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.5s;
+    .chapter-panel.bear-theme { background:linear-gradient(135deg,rgba(15,24,16,0.95),rgba(120,53,15,0.92)); border-color:var(--earth-brown); }
+
+    .chapter-panel-title { font-family:'Orbitron'; font-size:12px; letter-spacing:2px; }
+    .chapter-panel-story { font-size:13px; color:#bbb; line-height:1.5; }
+    .chapter-panel-story .neon { color:var(--bright-green); }
+
+    .victory { position:fixed; inset:0;
+      background:radial-gradient(ellipse at center,rgba(15,40,20,0.95),rgba(0,0,0,0.98));
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      z-index:300; opacity:0; visibility:hidden; transition:0.5s;
     }
-    .victory.show { opacity: 1; visibility: visible; }
-    .victory.bear-ending {
-      background: radial-gradient(ellipse at center, rgba(40,25,15,0.95) 0%, rgba(0,0,0,0.98) 100%);
+    .victory.show { opacity:1; visibility:visible; }
+
+    .victory-badge { width:70px; height:70px; border:2px solid var(--bright-green);
+      border-radius:50%; display:flex; align-items:center; justify-content:center;
+      font-size:35px; margin-bottom:15px; box-shadow:0 0 25px var(--bright-green);
     }
-    .victory-badge {
-      width: 70px;
-      height: 70px;
-      border: 2px solid var(--bright-green);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 35px;
-      margin-bottom: 15px;
-      box-shadow: 0 0 25px var(--bright-green);
+    .victory-title { font-family:'Orbitron'; font-size:18px; font-weight:900;
+      color:var(--bright-green); letter-spacing:4px; text-shadow:0 0 15px var(--bright-green);
     }
-    .victory.bear-ending .victory-badge {
-      border-color: var(--earth-brown);
-      box-shadow: 0 0 25px var(--earth-brown);
-    }
-    .victory-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 18px;
-      font-weight: 900;
-      color: var(--bright-green);
-      text-shadow: 0 0 15px var(--bright-green);
-      letter-spacing: 4px;
-      margin-bottom: 8px;
-    }
-    .victory.bear-ending .victory-title {
-      color: var(--earth-brown);
-      text-shadow: 0 0 15px var(--earth-brown);
-    }
-    .victory-subtitle {
-      font-size: 11px;
-      color: #666;
-      letter-spacing: 2px;
-      margin-bottom: 20px;
-    }
-    .victory-story {
-      max-width: 280px;
-      text-align: center;
-      margin-bottom: 25px;
-    }
-    .victory-story p {
-      font-size: 12px;
-      color: #888;
-      line-height: 1.5;
-      margin: 8px 0;
-    }
-    .victory-story .em { color: var(--bright-green); font-weight: 600; }
-    .victory.bear-ending .victory-story .em { color: var(--earth-brown); }
-    .victory-btn {
-      font-family: 'Orbitron', sans-serif;
-      padding: 12px 30px;
-      font-size: 10px;
-      letter-spacing: 2px;
-      background: transparent;
-      color: var(--bright-green);
-      border: 1px solid var(--bright-green);
-      cursor: pointer;
-      transition: all 0.3s;
-      pointer-events: auto;
-    }
-    .victory.bear-ending .victory-btn {
-      color: var(--earth-brown);
-      border-color: var(--earth-brown);
-    }
-    .victory-btn:active {
-      background: var(--bright-green);
-      color: #000;
-    }
-    .victory.bear-ending .victory-btn:active {
-      background: var(--earth-brown);
-    }
+    .victory-story { max-width:280px; text-align:center; }
   </style>
 
+  <!-- Smoothing component -->
   <script>
     AFRAME.registerComponent('super-smooth', {
       schema: {
@@ -347,7 +124,7 @@
           this.initialized = true;
           return;
         }
-        const factor = 0.1;
+        const factor = 0.12;
         this.smoothPos.lerp(obj.position, factor);
         this.smoothRot.x += (obj.rotation.x - this.smoothRot.x) * factor;
         this.smoothRot.y += (obj.rotation.y - this.smoothRot.y) * factor;
@@ -358,66 +135,73 @@
     });
   </script>
 </head>
+
 <body>
+
+  <!-- Corners -->
   <div class="corner corner-tl"></div>
   <div class="corner corner-tr"></div>
   <div class="corner corner-bl"></div>
   <div class="corner corner-br"></div>
 
+  <!-- Loader -->
   <div class="loader" id="loader">
     <div class="loader-title">FOREST TALES</div>
     <div class="loader-bar"></div>
   </div>
 
+  <!-- Top UI -->
   <div class="top-bar">
     <div class="top-row">
       <div class="logo">FOREST<span>TALES</span></div>
       <div class="status">AR <span class="online">ACTIVE</span><br>TRACKING</div>
     </div>
+
     <div class="progress-row">
       <div class="chapter-dot current" id="dot-forest">
-        <span class="dot-icon">�</span>
+        <span class="dot-icon">🌲</span>
         <span class="dot-text">Forest</span>
       </div>
       <div class="chapter-dot" id="dot-bear">
-        <span class="dot-icon">�</span>
+        <span class="dot-icon">🐻</span>
         <span class="dot-text">Bear</span>
       </div>
       <div class="chapter-dot" id="dot-text">
-        <span class="dot-icon">�</span>
+        <span class="dot-icon">💬</span>
         <span class="dot-text">Message</span>
       </div>
     </div>
   </div>
 
+  <!-- Bottom Hint -->
   <div class="bottom-bar">
     <div class="scan-hint">SCAN <span class="target" id="scan-target">FOREST</span></div>
   </div>
 
+  <!-- Story Panel -->
   <div class="chapter-panel" id="chapter-panel">
     <div class="chapter-panel-header">
-      <div class="chapter-panel-title" id="panel-title">CHAPTER I: THE FOREST</div>
+      <div class="chapter-panel-title" id="panel-title"></div>
       <div class="chapter-panel-status">DISCOVERED</div>
     </div>
-    <div class="chapter-panel-story" id="panel-story">Story content...</div>
+    <div class="chapter-panel-story" id="panel-story"></div>
   </div>
 
+  <!-- Ending Screen -->
   <div class="victory" id="victory">
     <div class="victory-badge" id="victory-badge">🌲</div>
     <div class="victory-title" id="victory-title">JOURNEY COMPLETE</div>
     <div class="victory-subtitle" id="victory-subtitle">FOREST EXPLORED</div>
-    <div class="victory-story" id="victory-story">
-      <p>You have <span class="em">explored the forest</span> and met its guardian.</p>
-      <p>The <span class="em">ancient bear</span> shared wisdom with you.</p>
-    </div>
+    <div class="victory-story" id="victory-story"></div>
     <button class="victory-btn" onclick="resetStory()">RESTART</button>
   </div>
 
+  <!-- A-FRAME + AR.js -->
   <a-scene
     embedded
     renderer="colorManagement: true; physicallyCorrectLights: true; logarithmicDepthBuffer: true"
     vr-mode-ui="enabled: false"
-    arjs="sourceType: webcam; trackingMethod: best; debugUIEnabled: false;"
+    arjs="sourceType: webcam; trackingMethod: best; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
     id="scene">
 
     <a-entity light="type: ambient; intensity: 0.8"></a-entity>
@@ -428,73 +212,108 @@
       <a-asset-item id="bear-glb" src="./bear.glb"></a-asset-item>
     </a-assets>
 
-    <!-- Forest marker - shows forest scene -->
-    <a-nft type="nft" url="./forest/forest" smooth="true" smoothCount="50" smoothTolerance="0.08" smoothThreshold="15" id="marker-forest">
-      <a-entity position="0 0 0" super-smooth id="forest-content">
-        <!-- 3D Forest Model from Sketchfab -->
-        <a-entity gltf-model="#forest-glb" position="0 100 -300" scale="30 30 30" rotation="-90 0 0" id="forest-model"></a-entity>
+    <!-- FOREST MARKER -->
+    <a-nft type="nft" url="./forest/forest" smooth="true" id="marker-forest">
+      <a-entity super-smooth id="forest-content">
+        <a-entity gltf-model="#forest-glb"
+                  position="0 0 -150"
+                  scale="8 8 8"
+                  rotation="-90 0 0"></a-entity>
       </a-entity>
     </a-nft>
 
-    <!-- Bear marker - shows bear in the forest context -->
-    <a-nft type="nft" url="./bear/grizzly-bear" smooth="true" smoothCount="50" smoothTolerance="0.08" smoothThreshold="15" id="marker-bear">
-      <a-entity position="0 0 0" super-smooth id="bear-content">
-        <!-- Keep the forest visible -->
-        <a-entity gltf-model="#forest-glb" position="0 100 -400" scale="25 25 25" rotation="-90 0 0" opacity="0.6"></a-entity>
-        
-        <!-- 3D Bear Model from Sketchfab - positioned IN the forest -->
-        <a-entity gltf-model="#bear-glb" position="0 80 -300" scale="1 1 1" rotation="-90 0 0" id="bear-model"></a-entity>
+    <!-- BEAR MARKER -->
+    <a-nft type="nft" url="./bear/grizzly-bear" smooth="true" id="marker-bear">
+      <a-entity super-smooth id="bear-content">
+
+        <!-- transparent smaller forest behind bear -->
+        <a-entity gltf-model="#forest-glb"
+                  position="0 0 -180"
+                  scale="6 6 6"
+                  rotation="-90 0 0"
+                  material="transparent:true; opacity:0.3"></a-entity>
+
+        <!-- main bear -->
+        <a-entity gltf-model="#bear-glb"
+                  position="0 0 -120"
+                  scale="22 22 22"
+                  rotation="-90 0 0"
+                  id="bear-model"></a-entity>
+
       </a-entity>
     </a-nft>
 
-    <!-- Text marker - shows speech bubble near bear -->
-    <a-nft type="nft" url="./text/text" smooth="true" smoothCount="50" smoothTolerance="0.08" smoothThreshold="15" id="marker-text">
-      <a-entity position="0 0 0" super-smooth id="text-content">
-        <!-- Keep the forest visible (lighter) -->
-        <a-entity gltf-model="#forest-glb" position="0 100 -450" scale="20 20 20" rotation="-90 0 0" opacity="0.4"></a-entity>
-        
-        <!-- Keep the Bear Model visible -->
-        <a-entity gltf-model="#bear-glb" position="-100 80 -300" scale="0.8 0.8 0.8" rotation="-90 0 45"></a-entity>
-        
-        <!-- Speech Bubble with text -->
-        <a-entity position="100 150 -280" rotation="0 -20 0">
-          <!-- Bubble background -->
-          <a-plane position="0 0 0" width="140" height="90" color="#ffffff" opacity="0.95" material="side: double"></a-plane>
-          <a-plane position="0 0 1" width="130" height="80" color="#f0f0f0" material="side: double"></a-plane>
-          
-          <!-- Text lines -->
-          <a-text value="Hello, traveler!" position="-60 30 2" color="#2d5016" width="250" align="center"></a-text>
-          <a-text value="Welcome to my forest." position="-60 10 2" color="#2d5016" width="250" align="center"></a-text>
-          <a-text value="May nature guide you!" position="-60 -10 2" color="#16a34a" width="250" align="center"></a-text>
+    <!-- TEXT MARKER -->
+    <a-nft type="nft" url="./text/text" smooth="true" id="marker-text">
+      <a-entity super-smooth id="text-content">
+
+        <!-- transparent forest -->
+        <a-entity gltf-model="#forest-glb"
+                  position="0 0 -200"
+                  scale="5 5 5"
+                  rotation="-90 0 0"
+                  material="transparent:true; opacity:0.4"></a-entity>
+
+        <!-- bear slightly offset -->
+        <a-entity gltf-model="#bear-glb"
+                  position="-70 0 -120"
+                  scale="18 18 18"
+                  rotation="-90 0 20"></a-entity>
+
+        <!-- speech bubble -->
+        <a-entity position="70 90 -110" rotation="0 -20 0">
+
+          <a-plane width="140" height="90"
+                   color="#ffffff" opacity="0.95"
+                   material="transparent:true; side:double"></a-plane>
+
+          <a-plane width="130" height="80"
+                   color="#f0f0f0" position="0 0 1"
+                   material="transparent:true; side:double"></a-plane>
+
+          <a-text value="Hello, traveler!"
+                  position="-65 28 2" color="#2d5016"
+                  width="240" align="center"></a-text>
+
+          <a-text value="Welcome to my forest."
+                  position="-65 8 2" color="#2d5016"
+                  width="240" align="center"></a-text>
+
+          <a-text value="May nature guide you!"
+                  position="-65 -12 2" color="#16a34a"
+                  width="240" align="center"></a-text>
+
         </a-entity>
+
       </a-entity>
     </a-nft>
 
     <a-entity camera></a-entity>
   </a-scene>
 
+  <!-- STORY + LOGIC SCRIPT -->
   <script>
     const storyData = {
       forest: {
         title: "CHAPTER I: THE ANCIENT FOREST",
-        story: `You enter a <span class="neon">mystical forest</span>, where towering trees reach toward the sky. The air is fresh with the scent of <span class="neon">pine and moss</span>. Shafts of golden sunlight pierce through the canopy, illuminating the forest floor. This place feels <span class="neon">alive with magic</span>.`
+        story: `You enter a <span class="neon">mystical forest</span> filled with ancient trees.`
       },
       bear: {
         title: "CHAPTER II: THE GUARDIAN",
-        story: `A <span class="neon">majestic bear</span> emerges from the shadows. This is no ordinary creature - it is the <span class="neon">ancient guardian</span> of the forest. Its eyes gleam with wisdom accumulated over centuries. The bear acknowledges your presence with a gentle nod, as if it has been <span class="neon">expecting you</span>.`
+        story: `A <span class="neon">majestic bear</span>, guardian of the forest, acknowledges your presence.`
       },
       text: {
         title: "CHAPTER III: THE MESSAGE",
-        story: `The guardian bear speaks to you in a voice that echoes through your mind. <span class="neon">"Welcome, traveler. You have shown respect by entering my domain peacefully. May the wisdom of nature guide your path, and may you always remember: we are all connected in this great forest of life."</span>`
+        story: `<span class="neon">"Welcome, traveler. May the wisdom of nature guide your path."</span>`
       }
     };
 
     const endings = {
       complete: {
-        badge: "�",
+        badge: "🌲",
         title: "JOURNEY COMPLETE",
         subtitle: "FOREST WISDOM GAINED",
-        story: `<p>You have <span class="em">explored the mystical forest</span>.</p><p>The <span class="em">ancient guardian bear</span> shared its wisdom.</p><p>You leave with a deeper connection to <span class="em">nature</span>.</p>`
+        story: `<p>You explored the <span class="em">mystical forest</span>.</p><p>The ancient <span class="em">guardian bear</span> shared its wisdom.</p>`
       }
     };
 
@@ -514,7 +333,6 @@
       text: document.getElementById('dot-text')
     };
 
-    // Disable markers by hiding their content until requirements are met
     const markerContents = {
       forest: document.getElementById('forest-content'),
       bear: document.getElementById('bear-content'),
@@ -524,106 +342,54 @@
     document.getElementById('scene').addEventListener('loaded', () => {
       setTimeout(() => {
         loader.classList.add('hidden');
-        // Initially hide bear and text content
-        if (markerContents.bear) markerContents.bear.setAttribute('visible', 'false');
-        if (markerContents.text) markerContents.text.setAttribute('visible', 'false');
-      }, 1500);
+        markerContents.bear.setAttribute('visible', 'false');
+        markerContents.text.setAttribute('visible', 'false');
+      }, 1200);
     });
 
     const markerIds = ['marker-forest', 'marker-bear', 'marker-text'];
     markerIds.forEach(id => {
       const marker = document.getElementById(id);
-      if (marker) {
-        const type = id.replace('marker-', '');
-        marker.addEventListener('markerFound', () => onMarkerFound(type));
-        marker.addEventListener('markerLost', () => onMarkerLost(type));
-      }
+      const type = id.replace('marker-', '');
+      marker.addEventListener('markerFound', () => onMarkerFound(type));
+      marker.addEventListener('markerLost', () => onMarkerLost(type));
     });
 
     function onMarkerFound(type) {
-      console.log('🎯 Marker found:', type);
-      console.log('📊 Current state:', state);
-      
-      // Check hierarchy: can only scan in order and once
       if (type === 'forest') {
-        if (state.forest) {
-          // Already scanned forest, show message
-          console.log('⚠️ Forest already scanned');
-          showWarning('Forest already discovered!');
-          return;
-        }
-        console.log('✅ Forest scanned for first time');
-        currentlyScanning = 'forest';
+        if (state.forest) return warn("Forest already discovered");
         state.forest = true;
-        
-        // Enable bear marker content for next scan
-        if (markerContents.bear) {
-          markerContents.bear.setAttribute('visible', 'true');
-          console.log('✅ Bear content enabled');
-        }
-        
-      } else if (type === 'bear') {
-        if (!state.forest) {
-          // Must scan forest first
-          console.log('⚠️ Tried to scan bear without forest');
-          showWarning('Find the forest first!');
-          return;
-        }
-        if (state.bear) {
-          // Already scanned bear
-          showWarning('Bear already encountered!');
-          return;
-        }
-        currentlyScanning = 'bear';
+        markerContents.bear.setAttribute('visible', 'true');
+      }
+      else if (type === 'bear') {
+        if (!state.forest) return warn("Find the forest first!");
+        if (state.bear) return warn("Bear already discovered");
         state.bear = true;
-        
-        // Enable text marker content for next scan
-        if (markerContents.text) markerContents.text.setAttribute('visible', 'true');
-        
-      } else if (type === 'text') {
-        if (!state.forest) {
-          showWarning('Find the forest first!');
-          return;
-        }
-        if (!state.bear) {
-          showWarning('Find the bear first!');
-          return;
-        }
-        if (state.text) {
-          // Already scanned text
-          showWarning('Message already received!');
-          return;
-        }
-        currentlyScanning = 'text';
+        markerContents.text.setAttribute('visible', 'true');
+      }
+      else if (type === 'text') {
+        if (!state.bear) return warn("Find the bear first!");
+        if (state.text) return warn("Message already received");
         state.text = true;
-        setTimeout(() => showVictory(), 1500);
+        setTimeout(showVictory, 1200);
       }
 
-      // Show story panel
-      const isBear = type === 'bear';
-      chapterPanel.classList.toggle('bear-theme', isBear);
+      chapterPanel.classList.toggle('bear-theme', type === 'bear');
       panelTitle.textContent = storyData[type].title;
       panelStory.innerHTML = storyData[type].story;
       chapterPanel.classList.add('show');
-      
+
       updateUI();
     }
 
     function onMarkerLost(type) {
-      if (currentlyScanning === type) {
-        chapterPanel.classList.remove('show');
-      }
+      chapterPanel.classList.remove('show');
     }
 
-    function showWarning(message) {
-      // Show warning in scan target
-      const originalText = scanTarget.textContent;
-      scanTarget.textContent = message;
-      scanTarget.style.color = '#ff6b6b';
-      setTimeout(() => {
-        updateScanTarget();
-        scanTarget.style.color = '';
-      }, 2000);
+    function warn(msg) {
+      scanTarget.textContent = msg;
+      scanTarget.style.color = "#ff6b6b";
+      setTimeout(updateScanTarget, 1500);
     }
 
     function updateUI() {
@@ -640,15 +406,15 @@
     }
 
     function updateScanTarget() {
-      if (!state.forest) scanTarget.textContent = 'FOREST';
-      else if (!state.bear) scanTarget.textContent = 'BEAR';
-      else if (!state.text) scanTarget.textContent = 'TEXT';
-      else scanTarget.textContent = 'COMPLETE';
+      scanTarget.style.color = "";
+      if (!state.forest) scanTarget.textContent = "FOREST";
+      else if (!state.bear) scanTarget.textContent = "BEAR";
+      else if (!state.text) scanTarget.textContent = "TEXT";
+      else scanTarget.textContent = "COMPLETE";
     }
 
     function showVictory() {
       const end = endings.complete;
-      victory.classList.remove('bear-ending');
       document.getElementById('victory-badge').textContent = end.badge;
       document.getElementById('victory-title').textContent = end.title;
       document.getElementById('victory-subtitle').textContent = end.subtitle;
@@ -658,19 +424,13 @@
 
     function resetStory() {
       state = { forest: false, bear: false, text: false };
-      currentlyScanning = null;
-      victory.classList.remove('show', 'bear-ending');
-      chapterPanel.classList.remove('bear-theme', 'show');
-      Object.values(dots).forEach(d => d.classList.remove('active', 'active-bear', 'current'));
-      dots.forest.classList.add('current');
-      
-      // Reset marker visibility
-      if (markerContents.forest) markerContents.forest.setAttribute('visible', 'true');
-      if (markerContents.bear) markerContents.bear.setAttribute('visible', 'false');
-      if (markerContents.text) markerContents.text.setAttribute('visible', 'false');
-      
-      updateScanTarget();
+      victory.classList.remove('show');
+      chapterPanel.classList.remove('show');
+      markerContents.bear.setAttribute('visible', 'false');
+      markerContents.text.setAttribute('visible', 'false');
+      updateUI();
     }
   </script>
+
 </body>
 </html>
