@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Camera Test - AR Debug</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        #status {
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        #video {
+            width: 100%;
+            max-width: 640px;
+            border: 2px solid #4ade80;
+            border-radius: 8px;
+        }
+        .success { color: #4ade80; }
+        .error { color: #ff6b6b; }
+        button {
+            padding: 12px 24px;
+            background: #4ade80;
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #22c55e;
+        }
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎥 Camera Access Test</h1>
+    
+    <div id="status">
+        <h2>Status:</h2>
+        <div id="messages"></div>
+    </div>
+
+    <button onclick="testCamera()">Test Camera</button>
+    <button onclick="testAR()">Test AR.js</button>
+    <button onclick="location.href='index.html'">Go to AR App</button>
+
+    <div>
+        <video id="video" autoplay playsinline></video>
+    </div>
+
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+
+    <script>
+        const messages = document.getElementById('messages');
+        const video = document.getElementById('video');
+
+        function log(msg, isError = false) {
+            const p = document.createElement('p');
+            p.className = isError ? 'error' : 'success';
+            p.textContent = '✓ ' + msg;
+            messages.appendChild(p);
+            console.log(msg);
+        }
+
+        function logError(msg, err) {
+            const p = document.createElement('p');
+            p.className = 'error';
+            p.innerHTML = '✗ ' + msg + (err ? '<pre>' + err + '</pre>' : '');
+            messages.appendChild(p);
+            console.error(msg, err);
+        }
+
+        // Check basic info
+        log('Protocol: ' + window.location.protocol);
+        log('Hostname: ' + window.location.hostname);
+        log('User Agent: ' + navigator.userAgent);
+
+        if (window.location.protocol === 'https:' || window.location.hostname === 'localhost') {
+            log('Protocol check: PASSED (HTTPS or localhost)');
+        } else {
+            logError('Protocol check: FAILED - Camera requires HTTPS!', true);
+        }
+
+        // Check getUserMedia support
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            log('getUserMedia API: SUPPORTED');
+        } else {
+            logError('getUserMedia API: NOT SUPPORTED', true);
+        }
+
+        // Check AFRAME and AR.js loading
+        window.addEventListener('load', () => {
+            if (typeof AFRAME !== 'undefined') {
+                log('A-Frame version: ' + AFRAME.version);
+            } else {
+                logError('A-Frame: NOT LOADED', true);
+            }
+        });
+
+        async function testCamera() {
+            messages.innerHTML = '';
+            log('Testing camera access...');
+
+            try {
+                const constraints = {
+                    video: {
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 960 }
+                    }
+                };
+
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                log('Camera access: GRANTED');
+                
+                const tracks = stream.getVideoTracks();
+                log('Video tracks found: ' + tracks.length);
+                
+                if (tracks.length > 0) {
+                    const settings = tracks[0].getSettings();
+                    log('Camera resolution: ' + settings.width + 'x' + settings.height);
+                    log('Facing mode: ' + settings.facingMode);
+                    
+                    video.srcObject = stream;
+                    video.style.display = 'block';
+                    log('Camera preview: ACTIVE');
+                }
+            } catch (err) {
+                logError('Camera access: FAILED', err.name + ': ' + err.message);
+                
+                if (err.name === 'NotAllowedError') {
+                    logError('Permission denied. Please allow camera access in browser settings.', true);
+                } else if (err.name === 'NotFoundError') {
+                    logError('No camera found on device.', true);
+                } else if (err.name === 'NotReadableError') {
+                    logError('Camera is in use by another application.', true);
+                } else if (err.name === 'SecurityError') {
+                    logError('Security error. Make sure you are using HTTPS.', true);
+                }
+            }
+        }
+
+        function testAR() {
+            messages.innerHTML = '';
+            log('Testing AR.js...');
+            
+            const testScene = document.createElement('div');
+            testScene.innerHTML = `
+                <a-scene
+                    embedded
+                    arjs="sourceType: webcam; debugUIEnabled: true;"
+                    vr-mode-ui="enabled: false"
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 300px;">
+                    <a-camera></a-camera>
+                </a-scene>
+            `;
+            document.body.appendChild(testScene);
+            
+            log('AR.js scene created. Check console for errors.');
+            log('If you see camera feed, AR.js is working!');
+        }
+
+        // Auto-run basic checks
+        setTimeout(() => {
+            if (navigator.permissions) {
+                navigator.permissions.query({ name: 'camera' }).then(result => {
+                    log('Camera permission state: ' + result.state);
+                });
+            }
+        }, 500);
+    </script>
+</body>
+</html>

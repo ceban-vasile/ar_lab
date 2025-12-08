@@ -5,8 +5,8 @@
   <title>Forest Tales - AR Experience</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 
-  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.5/aframe/build/aframe-ar-nft.min.js"></script>
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
 
   <style>
@@ -412,15 +412,16 @@
   <!-- A-FRAME + AR.js -->
   <a-scene
     embedded
-    renderer="colorManagement: true; physicallyCorrectLights: true; logarithmicDepthBuffer: true; antialias: true"
+    renderer="logarithmicDepthBuffer: true; precision: medium;"
     vr-mode-ui="enabled: false"
-    arjs="sourceType: webcam; trackingMethod: best; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
-    id="scene">
+    arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono; sourceWidth: 1280; sourceHeight: 960; displayWidth: 1280; displayHeight: 960;"
+    id="scene"
+    loading-screen="enabled: false">
 
     <a-entity light="type: ambient; intensity: 0.8"></a-entity>
     <a-entity light="type: directional; intensity: 1.0; castShadow: true" position="2 4 2"></a-entity>
 
-    <a-assets>
+    <a-assets timeout="30000">
       <a-asset-item id="forest-glb" src="./forest.glb"></a-asset-item>
       <a-asset-item id="bear-glb" src="./bear.glb"></a-asset-item>
     </a-assets>
@@ -506,6 +507,31 @@
 
   <!-- STORY + LOGIC SCRIPT -->
   <script>
+    // Debug camera and AR initialization
+    console.log('AR App Starting...');
+    
+    // Check for HTTPS
+    if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+      console.warn('AR.js requires HTTPS for camera access!');
+      alert('This app requires HTTPS to access the camera. Please use a secure connection.');
+    }
+
+    // Check camera permissions
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(stream) {
+          console.log('Camera access granted');
+          stream.getTracks().forEach(track => track.stop());
+        })
+        .catch(function(err) {
+          console.error('Camera access error:', err);
+          alert('Camera access denied or not available: ' + err.message);
+        });
+    } else {
+      console.error('getUserMedia not supported');
+      alert('Your browser does not support camera access');
+    }
+
     const storyData = {
       forest: {
         title: "CHAPTER I: THE ANCIENT FOREST",
@@ -553,11 +579,23 @@
     };
 
     document.getElementById('scene').addEventListener('loaded', () => {
+      console.log('A-Frame scene loaded');
       setTimeout(() => {
         loader.classList.add('hidden');
         if (markerContents.bear) markerContents.bear.setAttribute('visible', 'false');
         if (markerContents.text) markerContents.text.setAttribute('visible', 'false');
+        console.log('AR ready, camera should be visible');
       }, 1200);
+    });
+
+    // Add error handler for AR.js
+    window.addEventListener('arjs-video-loaded', () => {
+      console.log('AR.js video stream loaded successfully');
+    });
+
+    window.addEventListener('camera-error', (err) => {
+      console.error('Camera error event:', err);
+      alert('Camera failed to initialize. Please check permissions.');
     });
 
     const markerIds = ['marker-forest', 'marker-bear', 'marker-text'];
