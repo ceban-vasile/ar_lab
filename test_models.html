@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Model Test - Forest & Bear</title>
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <style>
+    body { margin: 0; }
+    #info {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 15px;
+      font-family: monospace;
+      font-size: 14px;
+      z-index: 1000;
+      border-radius: 8px;
+    }
+    .model-info {
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
+    }
+    .status { color: #4ade80; }
+    .error { color: #ff6b6b; }
+  </style>
+</head>
+<body>
+  <div id="info">
+    <h3 style="margin:0 0 10px 0;">🎨 Model Test Page</h3>
+    <div class="model-info">
+      <div>Forest Model: <span id="forest-status" class="status">Loading...</span></div>
+      <div>Size: <span id="forest-size">-</span></div>
+    </div>
+    <div class="model-info">
+      <div>Bear Model: <span id="bear-status" class="status">Loading...</span></div>
+      <div>Size: <span id="bear-size">-</span></div>
+    </div>
+    <div style="margin-top:15px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.2);">
+      <div>Use mouse to rotate camera</div>
+      <div>Scroll to zoom in/out</div>
+    </div>
+  </div>
+
+  <a-scene background="color: #87CEEB">
+    <!-- Lighting -->
+    <a-entity light="type: ambient; intensity: 0.8"></a-entity>
+    <a-entity light="type: directional; intensity: 1.2; castShadow: true" position="5 10 5"></a-entity>
+    
+    <!-- Assets -->
+    <a-assets>
+      <a-asset-item id="forest-glb" src="./forest.glb"></a-asset-item>
+      <a-asset-item id="bear-glb" src="./bear.glb"></a-asset-item>
+    </a-assets>
+
+    <!-- Ground plane -->
+    <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#2d5016"></a-plane>
+
+    <!-- Forest Model - Left Side -->
+    <a-entity position="-5 0 -5">
+      <a-entity gltf-model="#forest-glb" 
+                id="forest-model"
+                scale="1 1 1" 
+                rotation="0 0 0"
+                animation="property: rotation; to: 0 360 0; loop: true; dur: 30000"></a-entity>
+      <a-text value="FOREST\nscale: 1" position="0 -2 0" align="center" color="#ffffff" width="4"></a-text>
+    </a-entity>
+
+    <!-- Bear Model - Right Side -->
+    <a-entity position="5 0 -5">
+      <a-entity gltf-model="#bear-glb" 
+                id="bear-model"
+                scale="1 1 1" 
+                rotation="0 180 0"
+                animation="property: rotation; to: 0 540 0; loop: true; dur: 30000"></a-entity>
+      <a-text value="BEAR\nscale: 1" position="0 -2 0" align="center" color="#ffffff" width="4"></a-text>
+    </a-entity>
+
+    <!-- Camera -->
+    <a-entity camera look-controls wasd-controls position="0 3 10"></a-entity>
+  </a-scene>
+
+  <script>
+    // Monitor model loading
+    const forestModel = document.getElementById('forest-model');
+    const bearModel = document.getElementById('bear-model');
+    const forestAsset = document.getElementById('forest-glb');
+    const bearAsset = document.getElementById('bear-glb');
+
+    function formatBytes(bytes) {
+      return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+    }
+
+    // Forest model events
+    forestModel.addEventListener('model-loaded', () => {
+      document.getElementById('forest-status').textContent = '✅ Loaded';
+      document.getElementById('forest-status').className = 'status';
+      console.log('✅ Forest model loaded successfully');
+      
+      // Get model info
+      const obj = forestModel.getObject3D('mesh');
+      if (obj) {
+        const box = new THREE.Box3().setFromObject(obj);
+        const size = box.getSize(new THREE.Vector3());
+        document.getElementById('forest-size').textContent = 
+          `${size.x.toFixed(2)} x ${size.y.toFixed(2)} x ${size.z.toFixed(2)}`;
+      }
+    });
+
+    forestModel.addEventListener('model-error', (e) => {
+      document.getElementById('forest-status').textContent = '❌ Error';
+      document.getElementById('forest-status').className = 'error';
+      console.error('❌ Forest model error:', e);
+    });
+
+    // Bear model events
+    bearModel.addEventListener('model-loaded', () => {
+      document.getElementById('bear-status').textContent = '✅ Loaded';
+      document.getElementById('bear-status').className = 'status';
+      console.log('✅ Bear model loaded successfully');
+      
+      // Get model info
+      const obj = bearModel.getObject3D('mesh');
+      if (obj) {
+        const box = new THREE.Box3().setFromObject(obj);
+        const size = box.getSize(new THREE.Vector3());
+        document.getElementById('bear-size').textContent = 
+          `${size.x.toFixed(2)} x ${size.y.toFixed(2)} x ${size.z.toFixed(2)}`;
+      }
+    });
+
+    bearModel.addEventListener('model-error', (e) => {
+      document.getElementById('bear-status').textContent = '❌ Error';
+      document.getElementById('bear-status').className = 'error';
+      console.error('❌ Bear model error:', e);
+    });
+
+    // Check if files exist
+    fetch('./forest.glb').then(r => {
+      if (r.ok) {
+        console.log('✅ forest.glb found');
+      } else {
+        console.error('❌ forest.glb not found (404)');
+      }
+    }).catch(e => console.error('❌ Error checking forest.glb:', e));
+
+    fetch('./bear.glb').then(r => {
+      if (r.ok) {
+        console.log('✅ bear.glb found');
+      } else {
+        console.error('❌ bear.glb not found (404)');
+      }
+    }).catch(e => console.error('❌ Error checking bear.glb:', e));
+  </script>
+</body>
+</html>
