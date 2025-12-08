@@ -4,11 +4,6 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Set proper MIME types for AR.js marker files
-express.static.mime.define({
-  'application/octet-stream': ['fset', 'fset3', 'iset']
-});
-
 // Serve static files with CORS headers for AR.js
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -26,6 +21,10 @@ app.use(express.static(__dirname, {
     // Set proper content type for GLTF files
     if (filePath.endsWith('.gltf')) {
       res.setHeader('Content-Type', 'model/gltf+json');
+    }
+    // Set proper content type for NFT marker files
+    if (filePath.endsWith('.fset') || filePath.endsWith('.fset3') || filePath.endsWith('.iset')) {
+      res.setHeader('Content-Type', 'application/octet-stream');
     }
   }
 }));
