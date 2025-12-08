@@ -438,18 +438,18 @@
 
     <!-- BEAR MARKER -->
     <a-nft type="nft" url="./bear/grizzly-bear" smooth="true" smoothCount="10" smoothTolerance=".01" smoothThreshold="5" id="marker-bear">
-      <a-entity super-smooth id="bear-content">
+      <a-entity super-smooth id="bear-content" visible="false">
 
         <!-- transparent smaller forest behind bear -->
         <a-entity gltf-model="#forest-glb"
                   position="0 0 -180"
                   scale="6 6 6"
                   rotation="-90 0 0"
-                  material="transparent:true; opacity:0.3"></a-entity>
+                  material="transparent:true; opacity:0.4"></a-entity>
 
-        <!-- main bear -->
+        <!-- main bear in front of forest -->
         <a-entity gltf-model="#bear-glb"
-                  position="0 0 -120"
+                  position="0 0 -100"
                   scale="22 22 22"
                   rotation="-90 0 0"
                   id="bear-model"></a-entity>
@@ -459,20 +459,21 @@
 
     <!-- TEXT MARKER -->
     <a-nft type="nft" url="./text/text" smooth="true" smoothCount="10" smoothTolerance=".01" smoothThreshold="5" id="marker-text">
-      <a-entity super-smooth id="text-content">
+      <a-entity super-smooth id="text-content" visible="false">
 
         <!-- transparent forest -->
         <a-entity gltf-model="#forest-glb"
                   position="0 0 -200"
                   scale="5 5 5"
                   rotation="-90 0 0"
-                  material="transparent:true; opacity:0.4"></a-entity>
+                  material="transparent:true; opacity:0.3"></a-entity>
 
         <!-- bear slightly offset -->
         <a-entity gltf-model="#bear-glb"
-                  position="-70 0 -120"
+                  position="-70 0 -100"
                   scale="18 18 18"
-                  rotation="-90 0 20"></a-entity>
+                  rotation="-90 0 20"
+                  material="transparent:true; opacity:0.5"></a-entity>
 
         <!-- speech bubble -->
         <a-entity position="70 90 -110" rotation="0 -20 0">
@@ -608,25 +609,52 @@
     });
 
     function onMarkerFound(type) {
+      console.log('Marker found:', type);
       currentlyScanning = type;
       
       if (type === 'forest') {
-        if (state.forest) return warn("Forest already discovered");
-        state.forest = true;
-        if (markerContents.bear) markerContents.bear.setAttribute('visible', 'true');
+        // Forest is always visible when marker detected
+        if (markerContents.forest) markerContents.forest.setAttribute('visible', 'true');
+        
+        if (!state.forest) {
+          // First time discovering forest
+          state.forest = true;
+          console.log('Forest discovered for the first time!');
+        }
       }
       else if (type === 'bear') {
-        if (!state.forest) return warn("Find the forest first!");
-        if (state.bear) return warn("Bear already discovered");
-        state.bear = true;
-        if (markerContents.text) markerContents.text.setAttribute('visible', 'true');
+        // Check if forest was found first
+        if (!state.forest) {
+          return warn("Find the FOREST marker first!");
+        }
+        
+        // Show bear content (which includes transparent forest + bear)
+        if (markerContents.bear) markerContents.bear.setAttribute('visible', 'true');
+        
+        if (!state.bear) {
+          // First time discovering bear
+          state.bear = true;
+          console.log('Bear discovered for the first time!');
+        }
       }
       else if (type === 'text') {
-        if (!state.forest) return warn("Find the forest first!");
-        if (!state.bear) return warn("Find the bear first!");
-        if (state.text) return warn("Message already received");
-        state.text = true;
-        setTimeout(showVictory, 1200);
+        // Check sequence
+        if (!state.forest) {
+          return warn("Find the FOREST marker first!");
+        }
+        if (!state.bear) {
+          return warn("Find the BEAR marker first!");
+        }
+        
+        // Show text content (forest + bear + message)
+        if (markerContents.text) markerContents.text.setAttribute('visible', 'true');
+        
+        if (!state.text) {
+          // First time discovering message
+          state.text = true;
+          console.log('Message discovered!');
+          setTimeout(showVictory, 1200);
+        }
       }
 
       chapterPanel.classList.toggle('bear-theme', type === 'bear');
@@ -645,12 +673,15 @@
     }
 
     function warn(msg) {
-      scanTarget.textContent = msg;
+      console.warn('Warning:', msg);
+      scanTarget.textContent = msg.toUpperCase();
       scanTarget.style.color = "#ff6b6b";
+      scanTarget.style.fontSize = "11px";
       setTimeout(() => {
         updateScanTarget();
         scanTarget.style.color = "";
-      }, 1500);
+        scanTarget.style.fontSize = "";
+      }, 2500);
     }
 
     function updateUI() {
