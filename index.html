@@ -440,17 +440,16 @@
     <a-nft type="nft" url="./bear/grizzly-bear" smooth="true" smoothCount="10" smoothTolerance=".01" smoothThreshold="5" id="marker-bear">
       <a-entity super-smooth id="bear-content" visible="false">
 
-        <!-- transparent smaller forest behind bear -->
+        <!-- Forest scene with same positioning as forest marker -->
         <a-entity gltf-model="#forest-glb"
-                  position="0 0 -180"
-                  scale="6 6 6"
-                  rotation="-90 0 0"
-                  material="transparent:true; opacity:0.4"></a-entity>
+                  position="0 0 -150"
+                  scale="8 8 8"
+                  rotation="-90 0 0"></a-entity>
 
-        <!-- main bear in front of forest -->
+        <!-- Bear positioned naturally within the forest -->
         <a-entity gltf-model="#bear-glb"
-                  position="0 0 -100"
-                  scale="1 1 1"
+                  position="0 20 -120"
+                  scale="4 4 4"
                   rotation="-90 0 0"
                   id="bear-model"></a-entity>
 
@@ -461,22 +460,20 @@
     <a-nft type="nft" url="./text/text" smooth="true" smoothCount="10" smoothTolerance=".01" smoothThreshold="5" id="marker-text">
       <a-entity super-smooth id="text-content" visible="false">
 
-        <!-- transparent forest -->
+        <!-- Forest scene (same as forest marker) -->
         <a-entity gltf-model="#forest-glb"
-                  position="0 0 -200"
-                  scale="5 5 5"
-                  rotation="-90 0 0"
-                  material="transparent:true; opacity:0.3"></a-entity>
+                  position="0 0 -150"
+                  scale="8 8 8"
+                  rotation="-90 0 0"></a-entity>
 
-        <!-- bear slightly offset -->
+        <!-- Bear positioned naturally in forest -->
         <a-entity gltf-model="#bear-glb"
-                  position="-70 0 -100"
-                  scale="2 2 2"
-                  rotation="-90 0 20"
-                  material="transparent:true; opacity:0.5"></a-entity>
+                  position="-40 20 -120"
+                  scale="4 4 4"
+                  rotation="-90 0 15"></a-entity>
 
-        <!-- speech bubble -->
-        <a-entity position="70 90 -110" rotation="0 -20 0">
+        <!-- speech bubble next to bear -->
+        <a-entity position="60 90 -110" rotation="0 -15 0">
 
           <a-plane width="140" height="90"
                    color="#ffffff" opacity="0.95"
